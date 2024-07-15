@@ -167,7 +167,7 @@ class MeilisearchEngine extends Engine
 
         return $meilisearch->rawSearch($builder->query, $searchParams);
     }
-    
+ 
     /**
      * Check if filter key is GeoSearch function * * @param string $key
      * @return bool
