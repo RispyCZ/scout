@@ -168,6 +168,18 @@ class MeilisearchEngine extends Engine
         return $meilisearch->rawSearch($builder->query, $searchParams);
     }
 
+
+    /**
+     * Check if filter key is GeoSearch function * * @param string $key
+     * @return bool
+     */
+    protected function isGeosearchFunction(string $key): bool
+    {
+        $geoSearchFunctions = ["_geoRadius", "_geoBoundingBox"];
+
+        return in_array($key, $geoSearchFunctions);
+    }
+
     /**
      * Get the filter array for the query.
      *
@@ -177,6 +189,10 @@ class MeilisearchEngine extends Engine
     protected function filters(Builder $builder)
     {
         $filters = collect($builder->wheres)->map(function ($value, $key) {
+            if($this->isGeosearchFunction($key)) {
+                return sprintf('%s(%s)', $key, $value);
+            }
+            
             if (is_bool($value)) {
                 return sprintf('%s=%s', $key, $value ? 'true' : 'false');
             }
